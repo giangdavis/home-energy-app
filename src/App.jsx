@@ -1,96 +1,30 @@
-import React, { useState } from "react";
-import axios from "axios";
-
-const initialValues = {
-  userId: "",
-  year: "",
-  usage: "",
-};
+import React from "react";
+import SingleEntryForm from "./components/SingleEntryForm";
+import FileUploadForm from "./components/FileUploadForm";
+import HistoricalDataForm from "./components/HistoricalDataForm";
 
 const App = () => {
-  const [values, setValues] = useState(initialValues);
-  const [result, setResult] = useState("");
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    console.log('Input changing:', name, value);  // Debug line
-
-    setValues({
-      ...values,
-      [name]: value,
-    });
+  const appStyle = {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh", // Full height of the viewport
+    width: "100vw",  // Full width of the viewport
+    textAlign: "center",
+    margin: "0", // Ensure no extra spacing
+    padding: "20px",
+    boxSizing: "border-box", // Include padding in dimensions
   };
 
-  function handleSubmit(event) {
-    event.preventDefault();
- 
-    axios
-      .post(
-        "https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/input",
-        {
-          userId: values.userId,
-          date: values.year,
-          usage: Number(values.usage),
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        setResult("Energy data saved successfully")
- 
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log(values.userId + values.year + values.usage);
-        setResult("Something went wrong!")
-      });
- }
   return (
-    <div className="App">
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="userId">userId:</label>
-        <br />
-        <input
-          type="text"
-          name="userId"
-          value={values.userId}
-          onChange={handleInputChange}
-          id="userId"
-        />
-        <br />
-        <br />
-
-        <div className="flex flex-col">
-        <label htmlFor="year">Date (YYYY-MM-DD):</label>
-        <br />
-        <input
-          type="text"
-          name="year"
-          value={values.year}
-          onChange={handleInputChange}
-          id="year"
-        />
-        </div>
-
-        <label htmlFor="usage">Usage:</label>
-        <br />
-        <input
-          type="text"
-          name="usage"
-          value={values.usage}
-          onChange={handleInputChange}
-          id="usage"
-        />
-        <br />
-        <br />
-
-        <button type="submit" id="submit-button">
-          Submit
-        </button>
-      </form>
-
-      <p>{result}</p>
-
-
+    <div style={appStyle}>
+      <h1>Energy Data Input</h1>
+      <SingleEntryForm />
+      <hr style={{ margin: "20px 0", width: "80%" }} />
+      <FileUploadForm/>
+      <hr style={{ margin: "20px 0", width: "80%" }} />
+      <HistoricalDataForm/>
     </div>
   );
 };
