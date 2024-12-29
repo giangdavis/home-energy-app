@@ -3,20 +3,21 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const SignIn = ({ onSignIn }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://your-api-url/auth/signin", { email, password });
+      const response = await axios.post("https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/auth/login", { username, password });
+      console.log(response.data)
       const { token, userId } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
       onSignIn(userId);
     } catch (error) {
       console.error("Error signing in:", error);
-      alert("Invalid email or password. Please try again.");
+      alert("Invalid username or password. Please try again.");
     }
   };
 
@@ -25,10 +26,10 @@ const SignIn = ({ onSignIn }) => {
       <h2>Sign In</h2>
       <form onSubmit={handleSignIn}>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input

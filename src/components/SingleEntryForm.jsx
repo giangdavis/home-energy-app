@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const initialValues = {
-  userId: "",
   year: "",
   usage: "",
 };
 
-const SingleEntryForm = () => {
+const SingleEntryForm = ({ userId }) => {
   const [values, setValues] = useState(initialValues);
   const [result, setResult] = useState("");
 
@@ -21,24 +20,25 @@ const SingleEntryForm = () => {
 
   function handleSubmit(event) {
     event.preventDefault();
- 
+
     axios
       .post(
         "https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/input",
         {
-          userId: values.userId,
+          userId: userId,
           date: values.year,
           usage: Number(values.usage),
         }
       )
       .then((response) => {
         console.log(response);
-        setResult("Energy data saved successfully")
+        setResult("Energy data saved successfully");
+        // Clear form after successful submission
+        setValues(initialValues);
       })
       .catch((error) => {
         console.log(error);
-        console.log(values.userId + values.year + values.usage);
-        setResult("Something went wrong!")
+        setResult("Something went wrong!");
       });
   }
 
@@ -46,18 +46,6 @@ const SingleEntryForm = () => {
     <div>
       <h2>Single Entry Form</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="userId">userId:</label>
-        <br />
-        <input
-          type="text"
-          name="userId"
-          value={values.userId}
-          onChange={handleInputChange}
-          id="userId"
-        />
-        <br />
-        <br />
-
         <label htmlFor="year">Date (YYYY-MM-DD):</label>
         <br />
         <input
