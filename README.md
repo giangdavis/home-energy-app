@@ -81,7 +81,7 @@ The application is deployed using AWS Amplify directly from the GitHub repositor
 - CSV files must follow specified format for bulk uploads
 
 ## Testing the Application
-1. Navigate to the Amplify URL or run locally
+1. Navigate to the [Amplify URL](https://main.d2qbgmcglyi3ta.amplifyapp.com/) or run locally
 2. Create account and verify email
 3. Refer to api-documentation.md for API information
 4. Test main features:
