@@ -83,8 +83,7 @@ The application is deployed using AWS Amplify directly from the GitHub repositor
 ## Testing the Application
 1. Navigate to the Amplify URL or run locally
 2. Create account and verify email
-3. Refer to api-documentation.md for API information
-4. Test main features:
+3. Test main features:
    - Single energy readings
    - CSV file uploads
    - Historical data view

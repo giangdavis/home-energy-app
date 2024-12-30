@@ -11,8 +11,14 @@ const HistoricalDataForm = ({userId}) => {
     event.preventDefault();
     setLoading(true);
     setError('');
-
     try {
+      // Get the authentication token from localStorage
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
       const queryParams = new URLSearchParams({
         startDate,
         endDate,
@@ -20,10 +26,19 @@ const HistoricalDataForm = ({userId}) => {
       }).toString();
 
       const response = await fetch(
-        `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/history?${queryParams}`
+        `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/history?${queryParams}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
 
       if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Unauthorized access. Please sign in again.');
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -32,10 +47,18 @@ const HistoricalDataForm = ({userId}) => {
     } catch (err) {
       setError(`Error fetching data: ${err.message}`);
       console.error('Fetch error:', err);
+      
+      // Handle authentication errors
+      if (err.message.includes('Unauthorized')) {
+        // You might want to trigger a sign-out or redirect to login
+        localStorage.removeItem('token');
+        // navigate('/signin'); // If using react-router
+      }
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div style={{ maxWidth: '800px', margin: '20px auto', padding: '20px' }}>
