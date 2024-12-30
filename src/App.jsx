@@ -6,6 +6,7 @@ import SingleEntryForm from "./components/SingleEntryForm";
 import FileUploadForm from "./components/FileUploadForm";
 import HistoricalDataForm from "./components/HistoricalDataForm";
 import ConfirmAccount from "./components/ConfirmAccount";
+import AlertsForm from "./components/AlertsForm";
 
 const App = () => {
   const appStyle = {
@@ -52,9 +53,11 @@ const App = () => {
         {isAuthenticated ? (
           <div>
             <h1>Welcome, {userId}!</h1>
+            <HistoricalDataForm userId={userId} />
             <SingleEntryForm userId={userId} />
-            <FileUploadForm />
-            <HistoricalDataForm />
+            <FileUploadForm userId={userId} />
+            <AlertsForm userId = {userId}/>
+            
             <button onClick={handleSignOut}>Sign Out</button>
           </div>
         ) : (

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 
-const HistoricalDataForm = () => {
+const HistoricalDataForm = ({userId}) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [data, setData] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const userId = "davis_giang_test123"; // Change when implementing authentication
 
   const handleSubmit = async (event) => {
     event.preventDefault();

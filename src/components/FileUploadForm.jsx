@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 
 
-const FileUploadForm = () => {
+const FileUploadForm = ({ userId }) => {
   const [file, setFile] = useState(null);
   const [uploadResult, setUploadResult] = useState("");
-  const userId = "davis_giang_test123" //change when i implement authentication
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
