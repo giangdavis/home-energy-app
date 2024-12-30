@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const initialValues = {
-  year: "",
+  date: "",
   usage: "",
 };
 
@@ -34,7 +34,7 @@ const SingleEntryForm = ({ userId }) => {
         "https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/input",
         {
           userId: userId,
-          date: values.year,
+          date: values.date,
           usage: Number(values.usage),
         },
         {
@@ -55,7 +55,7 @@ const SingleEntryForm = ({ userId }) => {
       if (error.response) {
         // Server responded with error
         errorMessage += error.response.data?.error || error.response.data?.message || error.message;
-        
+
         // Handle authentication errors
         if (error.response.status === 401 || error.response.status === 403) {
           errorMessage = 'Authentication error. Please sign in again.';
@@ -80,21 +80,23 @@ const SingleEntryForm = ({ userId }) => {
     <div>
       <h2>Single Entry Form</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="year">Date (YYYY-MM-DD):</label>
+        <label htmlFor="date">Date:</label>
         <br />
         <input
           type="date"
-          name="year"
-          value={values.year}
+          name="date"
+          value={values.date}
           onChange={handleInputChange}
-          id="year"
+          id="date"
           required
           disabled={isSubmitting}
+          className="input-box"
         />
         <br />
         <br />
 
-        <label htmlFor="usage">Usage:</label>
+        <label htmlFor="usage">
+            Energy Usage (kWh):</label>
         <br />
         <input
           type="number"
@@ -110,15 +112,15 @@ const SingleEntryForm = ({ userId }) => {
         <br />
         <br />
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           id="submit-button"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </form>
-      <p style={{ 
+      <p style={{
         color: result.includes('successfully') ? 'green' : 'red',
         marginTop: '10px'
       }}>

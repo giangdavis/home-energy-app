@@ -7,26 +7,15 @@ import FileUploadForm from "./components/FileUploadForm";
 import HistoricalDataForm from "./components/HistoricalDataForm";
 import ConfirmAccount from "./components/ConfirmAccount";
 import AlertsForm from "./components/AlertsForm";
+import ExportData from "./components/ExportData";
+import EnergySummary from "./components/EnergySummary";
+import CostEstimation from "./components/CostEstimation";
 
 const App = () => {
-  const appStyle = {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh", // Full height of the viewport
-    width: "100vw",  // Full width of the viewport
-    textAlign: "center",
-    margin: "0", // Ensure no extra spacing
-    padding: "20px",
-    boxSizing: "border-box", // Include padding in dimensions
-  };
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    // Check if the user is already authenticated
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
@@ -46,22 +35,59 @@ const App = () => {
     localStorage.removeItem("userId");
   };
 
-
   return (
     <Router>
-      <div style={appStyle}>
+      <div className="app-container">
         {isAuthenticated ? (
-          <div>
+          <div className="dashboard">
             <h1>Welcome, {userId}!</h1>
-            <HistoricalDataForm userId={userId} />
-            <SingleEntryForm userId={userId} />
-            <FileUploadForm userId={userId} />
-            <AlertsForm userId = {userId}/>
-            
-            <button onClick={handleSignOut}>Sign Out</button>
+
+            <section className="component-section">
+              <SingleEntryForm userId={userId} />
+            </section>
+
+            <hr className="section-divider" />
+
+            <section className="component-section">
+              <HistoricalDataForm userId={userId} />
+            </section>
+
+            <hr className="section-divider" />
+
+            <section className="component-section">
+              <FileUploadForm userId={userId} />
+            </section>
+
+            <hr className="section-divider" />
+
+            <section className="component-section">
+              <AlertsForm userId={userId} />
+            </section>
+
+            <hr className="section-divider" />
+
+            <section className="component-section">
+              <ExportData userId = {userId} />
+            </section>
+
+            <hr className="section-divider" />
+
+            <section className="component-section">
+              <EnergySummary userId = {userId} />
+            </section>
+
+            <hr className="section-divider" />
+
+            <section className="component-section">
+              <CostEstimation/>
+            </section>
+
+            <button className="signout-button" onClick={handleSignOut}>
+              Sign Out
+            </button>
           </div>
         ) : (
-          <div>
+          <div className="auth-container">
             <h1>Home Energy Data</h1>
             <Routes>
               <Route path="/signup" element={<SignUp />} />
