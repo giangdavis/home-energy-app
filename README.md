@@ -10,8 +10,8 @@
 ### Running Locally
 1. **Clone the Repository**
    ```bash
-   git clone [your-repository-url]
-   cd energy-monitoring-frontend
+   git clone https://github.com/giangdavis/home-energy-app.git
+   cd home-energy-app
    ```
 
 2. **Install Dependencies**
@@ -27,7 +27,7 @@
 
 ## Project Structure
 ```
-energy-monitoring-frontend/
+home-energy-app
 ├── src/
 │   ├── components/
 │   │   ├── AlertsForm.jsx
@@ -89,9 +89,7 @@ The application is deployed using AWS Amplify directly from the GitHub repositor
 ## Testing the Application
 1. Navigate to the [Amplify URL](https://main.d2qbgmcglyi3ta.amplifyapp.com/) or run locally
 2. Create account and verify email
-3. Refer to api-documentation.md for API information
-4. Test main features:
-   - Single energy readings
-   - CSV file uploads
-   - Historical data view
-   - Alert settings
+3. Upload data using single entry or bulk 
+4. Fetch data using historical energy usage, export energy data, energy consumption trends, cost estimation on the UI
+5. To test alerts,  set a threshold. Then input any data that exceeds the threshold and receive alert. (Only goes to giangdavis@yahoo.com currently TODO: set up an API which would add an email to the subscriptions, and also email confirmation for the subscription)
+6. For API testing Refer to api-documentation.md for API usage
