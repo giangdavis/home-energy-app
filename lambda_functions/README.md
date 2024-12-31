@@ -10,10 +10,13 @@ This directory contains all Lambda functions for the Energy Monitoring System ba
 - `HandleAuthConfirmation` - Account verification process
 
 ### Energy Data Management
-- `HandleManualDataInput` - Process single energy readings
-- `HandleGetEnergyHistory` - Retrieve historical energy data
+- `HandleManualDataInput` - Stores a single entry of energy data into dynamoDB
+- `HandleGetEnergyHistory` - Retrieve historical energy data from dynamoDB
 - `HandleCSVEnergyUpload` - Process CSV file uploads from S3
 - `HandleGeneratingPreSignedURL` - Generates a presigned URL with that can be used to directly upload to S3 bucket
+- `HandleGetCsv` - Retrieves energy data from DynamoDB, compiles it into a CSV and sends it 
+- `HandleGetSummary` - Retrieves energy data from DynamoDB based on period 
+- `HandleCostEstimation` - Takes energy usage for a time period and calculates cost 
 
 ### Alert System
 - `HandleSetThreshold` - Set energy usage alert thresholds

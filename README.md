@@ -32,6 +32,9 @@ energy-monitoring-frontend/
 │   ├── components/
 │   │   ├── AlertsForm.jsx
 │   │   ├── ConfirmAccount.jsx
+│   │   ├── CostEstimation.jsx
+│   │   ├── EnergySummary.jsx
+│   │   ├── ExportData.jsx
 │   │   ├── FileUploadForm.jsx
 │   │   ├── HistoricalDataForm.jsx
 │   │   ├── SignIn.jsx
@@ -74,6 +77,9 @@ The application is deployed using AWS Amplify directly from the GitHub repositor
 - **FileUploadForm**: Bulk CSV data upload
 - **HistoricalDataForm**: View historical data
 - **AlertsForm**: Set usage thresholds
+- **CostEstimation**: Calculate energy costs
+- **ExportData**: Download usage data as CSV
+- **EnerySummaryForm**: View usage summaries
 
 ## Development Notes
 - API base URL: `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com`

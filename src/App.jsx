@@ -79,7 +79,7 @@ const App = () => {
             <hr className="section-divider" />
 
             <section className="component-section">
-              <CostEstimation/>
+              <CostEstimation userId = {userId}/>
             </section>
 
             <button className="signout-button" onClick={handleSignOut}>

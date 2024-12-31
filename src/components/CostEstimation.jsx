@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 
-const initialValues = {
-  usage: "",
-  costPerKwh: "",
-};
-
-const CostEstimation = () => {
-  const [values, setValues] = useState(initialValues);
+const CostEstimation = ({ userId }) => {
+  const [values, setValues] = useState({
+    startDate: "",
+    endDate: "",
+    costPerKwh: "",
+  });
   const [result, setResult] = useState("");
   const [isCalculating, setIsCalculating] = useState(false);
 
@@ -24,8 +23,15 @@ const CostEstimation = () => {
     setResult("");
 
     try {
+      const queryParams = new URLSearchParams({
+        userId,
+        startDate: values.startDate,
+        endDate: values.endDate,
+        costPerKwh: values.costPerKwh || 0.12, // Default costPerKwh
+      }).toString();
+
       const response = await fetch(
-        `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/cost-estimation?usage=${values.usage}&costPerKwh=${values.costPerKwh || 0.12}`
+        `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/cost-estimation?${queryParams}`
       );
 
       if (!response.ok) {
@@ -33,7 +39,7 @@ const CostEstimation = () => {
       }
 
       const data = await response.json();
-      setResult(`Total Cost: $${data.totalCost.toFixed(2)}`);
+      setResult(`Total Usage: ${data.totalUsage} kWh\nTotal Cost: $${data.totalCost.toFixed(2)}`);
     } catch (error) {
       console.error("Calculation error:", error);
       setResult(`Error: ${error.message}`);
@@ -46,52 +52,64 @@ const CostEstimation = () => {
     <div>
       <h2>Cost Estimation</h2>
       <form onSubmit={handleCalculate}>
-        <label htmlFor="usage">Energy Usage (kWh):</label>
-        <br />
-        <input
-          type="number"
-          name="usage"
-          value={values.usage}
-          onChange={handleInputChange}
-          id="usage"
-          step="0.01"
-          min="0"
-          required
-          disabled={isCalculating}
-        />
-        <br />
-        <br />
+        <div className="form-group">
+          <label htmlFor="startDate">Start Date:</label>
+          <input
+            type="date"
+            name="startDate"
+            value={values.startDate}
+            onChange={handleInputChange}
+            id="startDate"
+            required
+            disabled={isCalculating}
+          />
+        </div>
 
-        <label htmlFor="costPerKwh">Cost per kWh (USD):</label>
-        <br />
-        <input
-          type="number"
-          name="costPerKwh"
-          value={values.costPerKwh}
-          onChange={handleInputChange}
-          id="costPerKwh"
-          step="0.01"
-          min="0"
-          placeholder="Default: 0.12"
-          disabled={isCalculating}
-        />
-        <br />
-        <br />
+        <div className="form-group">
+          <label htmlFor="endDate">End Date:</label>
+          <input
+            type="date"
+            name="endDate"
+            value={values.endDate}
+            onChange={handleInputChange}
+            id="endDate"
+            required
+            disabled={isCalculating}
+          />
+        </div>
 
-        <button
-          type="submit"
-          id="calculate-button"
-          disabled={isCalculating}
-        >
-          {isCalculating ? "Calculating..." : "Calculate"}
-        </button>
+        <div className="form-group">
+          <label htmlFor="costPerKwh">Cost per kWh (USD):</label>
+          <input
+            type="number"
+            name="costPerKwh"
+            value={values.costPerKwh}
+            onChange={handleInputChange}
+            id="costPerKwh"
+            step="0.01"
+            min="0"
+            placeholder="Default: 0.12"
+            disabled={isCalculating}
+          />
+        </div>
+
+        <div className="form-group">
+          <button type="submit" disabled={isCalculating}>
+            {isCalculating ? "Calculating..." : "Calculate"}
+          </button>
+        </div>
       </form>
-      <p style={{
-        color: result.includes("Total Cost") ? "green" : "red",
-        marginTop: "10px"
-      }}>
-        {result}
-      </p>
+
+      {result && (
+        <pre
+          style={{
+            color: result.includes("Total Cost") ? "green" : "red",
+            marginTop: "10px",
+          }}
+        >
+          {result}
+        </pre>
+      )}
     </div>
   );
 };

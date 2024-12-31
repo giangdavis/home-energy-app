@@ -2,17 +2,20 @@
 
 ## Table of Contents
 1. [Overview](#overview)
-2. [Authentication](#authentication)
+2. [Authentication](#authentication) 
 3. [API Endpoints](#api-endpoints)
    - [Authentication Endpoints](#authentication-endpoints)
    - [Energy Data Endpoints](#energy-data-endpoints)
+   - [Energy Summary](#energy-summary)  
+   - [Export Data](#export-data)
+   - [Cost Estimation](#cost-estimation)
    - [Alert Management](#alert-management)
-4. [File Upload Specifications](#file-upload-specifications)
+4. [File Upload Specifications](#file-upload-specifications)  
 5. [Error Handling](#error-handling)
 
 ## Overview
 
-This document provides comprehensive documentation for the Energy Monitoring System API. The API allows users to manage energy usage data, set alerts, and retrieve historical information.
+This document provides comprehensive documentation for the Energy Monitoring System API. The API allows users to manage energy usage data, set alerts, retrieve historical information, get energy summaries, export data, and estimate costs.
 
 Base URL: `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com`
 
@@ -22,7 +25,7 @@ All endpoints except `/auth/signup` and `/auth/login` require authentication usi
 
 Example:
 ```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...  
 ```
 
 ## API Endpoints
@@ -33,11 +36,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Endpoint**: `/auth/signup`
 - **Method**: POST
 - **Headers**: None required
-- **Request Body**:
+- **Request Body**:  
   ```json
   {
     "username": "string",
-    "email": "string",
+    "email": "string", 
     "password": "string"
   }
   ```
@@ -48,7 +51,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   }
   ```
 
-#### 2. User Login
+#### 2. User Login  
 - **Endpoint**: `/auth/login`
 - **Method**: POST
 - **Headers**: None required
@@ -56,7 +59,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   ```json
   {
     "username": "string",
-    "password": "string"
+    "password": "string" 
   }
   ```
 - **Response**:
@@ -68,27 +71,27 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   ```
 
 #### 3. Account Confirmation
-- **Endpoint**: `/auth/confirm`
+- **Endpoint**: `/auth/confirm` 
 - **Method**: POST
 - **Headers**: None required
 - **Request Body**:
-  ```json
+  ```json 
   {
     "username": "string",
     "confirmationCode": "string"
   }
   ```
-- **Response**:
+- **Response**:  
   ```json
   {
-    "message": "Account confirmed successfully"
+    "message": "Account confirmed successfully" 
   }
   ```
 
 ### Energy Data Endpoints
 
 #### 1. Single Energy Reading
-- **Endpoint**: `/energy/input`
+- **Endpoint**: `/energy/input` 
 - **Method**: POST
 - **Headers**: 
   - Authorization: Bearer {token}
@@ -96,26 +99,26 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Request Body**:
   ```json
   {
-    "userId": "string",
+    "userId": "string",  
     "date": "YYYY-MM-DD",
-    "usage": number
+    "usage": number 
   }
   ```
 - **Response**:
   ```json
-  {
+  {  
     "message": "Energy data saved successfully"
   }
   ```
 
 #### 2. Historical Data Retrieval
 - **Endpoint**: `/energy/history`
-- **Method**: GET
+- **Method**: GET 
 - **Headers**: Authorization: Bearer {token}
-- **Query Parameters**:
+- **Query Parameters**: 
   - userId: string
   - startDate: YYYY-MM-DD
-  - endDate: YYYY-MM-DD
+  - endDate: YYYY-MM-DD  
 - **Response**:
   ```json
   [
@@ -129,13 +132,75 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 #### 3. Bulk Upload
 - **Endpoint**: `/energy/upload`
 - **Method**: POST
-- **Headers**: Authorization: Bearer {token}
+- **Headers**: Authorization: Bearer {token} 
 - **Query Parameters**: userId: string
 - **Response**:
   ```json
   {
     "uploadUrl": "string",
-    "fileKey": "string"
+    "fileKey": "string"  
+  }
+  ```
+
+### Energy Summary
+
+#### 1. Retrieve Energy Summary 
+- **Endpoint**: `/energy/summary`
+- **Method**: GET
+- **Headers**: Authorization: Bearer {token}
+- **Query Parameters**:
+  - userId: string
+  - period: string (daily, weekly, monthly)
+- **Response**:
+  ```json
+  [
+    {
+      "date": "YYYY-MM-DD",
+      "usage": number
+    }
+  ]
+  ```
+
+### Export Data
+
+#### 1. Export Energy Data as CSV
+- **Endpoint**: `/energy/export`
+- **Method**: GET 
+- **Headers**: Authorization: Bearer {token}
+- **Query Parameters**:
+  - userId: string 
+  - startDate: YYYY-MM-DD
+  - endDate: YYYY-MM-DD
+- **Response**:
+  - **Headers**:
+    ```
+    Content-Type: text/csv
+    Content-Disposition: attachment; filename="energy_data.csv"
+    ```
+  - **Body**:
+    ```csv
+    Date,Usage
+    2024-01-01,25.5
+    2024-01-02,27.3
+    ```
+
+### Cost Estimation
+
+#### 1. Estimate Energy Cost
+- **Endpoint**: `/energy/cost-estimation`
+- **Method**: GET
+- **Headers**: Authorization: Bearer {token}
+- **Query Parameters**: 
+  - userId: string
+  - startDate: YYYY-MM-DD
+  - endDate: YYYY-MM-DD
+  - costPerKwh: number (default: 0.12)
+- **Response**:  
+  ```json
+  {
+    "totalUsage": number,
+    "costPerKwh": number,
+    "totalCost": number
   }
   ```
 
@@ -143,7 +208,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 #### 1. Set Usage Threshold
 - **Endpoint**: `/alerts`
-- **Method**: POST
+- **Method**: POST  
 - **Headers**: 
   - Authorization: Bearer {token}
   - Content-Type: application/json
@@ -151,7 +216,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   ```json
   {
     "userId": "string",
-    "threshold": number
+    "threshold": number  
   }
   ```
 - **Response**:
@@ -164,17 +229,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ## File Upload Specifications
 
-### CSV File Format
+### CSV File Format  
 Files uploaded through the bulk upload endpoint must follow this format:
 
-```csv
+```csv 
 date,usage
 2024-01-01,25.5
 2024-01-02,27.3
 ```
 
 Requirements:
-- File must be in CSV format
+- File must be in CSV format  
 - Required columns: date, usage
 - Date format: YYYY-MM-DD
 - Usage must be a numeric value representing kWh
@@ -189,16 +254,16 @@ All endpoints use standard HTTP status codes and return error messages in a cons
 }
 ```
 
-Common Status Codes:
+Common Status Codes: 
 - 200: Success
 - 400: Bad Request (invalid input)
-- 401: Unauthorized (invalid/missing token)
+- 401: Unauthorized (invalid/missing token) 
 - 403: Forbidden (unauthorized access)
 - 500: Internal Server Error
 
 Example Error Response:
 ```json
 {
-  "error": "Invalid threshold value"
+  "error": "Invalid threshold value"  
 }
 ```
