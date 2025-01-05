@@ -64,7 +64,7 @@ def lambda_handler(event, context):
         table = dynamodb.Table('EnergyData')
         
         # Save data to DynamoDB
-        response = table.put_item(
+        table.put_item(
             Item={
                 'userId': requested_user_id,
                 'date': date,
@@ -81,6 +81,7 @@ def lambda_handler(event, context):
         end_date = (datetime.strptime(date, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
         payload = {"userId": requested_user_id, "startDate": start_date, "endDate": end_date}
         logger.info(f"Invoking alert Lambda function with payload: {json.dumps(payload)}")
+        
         try:
             lambda_client.invoke(
                 FunctionName=alert_lambda_name,
@@ -88,7 +89,9 @@ def lambda_handler(event, context):
                 Payload=json.dumps(payload),
             )
         except Exception as alert_exception:
+            # Log the error but don't fail the main function
             logger.error(f"Error invoking alert Lambda function: {str(alert_exception)}")
+            # Continue with successful response since data was saved
         
         return {
             'statusCode': 200,
@@ -113,6 +116,7 @@ def lambda_handler(event, context):
             })
         }
     except Exception as e:
+        # Only return 500 if the DynamoDB operation fails
         logger.error(f"Error saving energy data: {str(e)}")
         return {
             'statusCode': 500,
