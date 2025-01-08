@@ -93,7 +93,7 @@ const App: React.FC = () => {
             <h1>Home Energy Data</h1>
             <Routes>
               <Route path="/signup" element={<SignUp />} />
-              <Route path="/signin" element={<SignIn onSignIn={handleSignIn} />} />
+              <Route path="/signin" element={<SignIn />} />
               <Route path="*" element={<Navigate to="/signin" />} />
               <Route path="/confirm-account" element={<ConfirmAccount />} />
             </Routes>
