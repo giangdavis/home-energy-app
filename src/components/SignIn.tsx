@@ -1,22 +1,28 @@
-import React, { useState } from "react";
+
+import React, { useState, FormEvent } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const SignIn = ({ onSignIn }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+type SignInProps = {
+  onSignIn: (userId: string) => void;
+};
 
-  const handleSignIn = async (e) => {
+const SignIn: React.FC<SignInProps> = ({ onSignIn }) => {
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleSignIn = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/auth/login", { username, password });
-      console.log(response.data)
+      const response = await axios.post("https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/auth/login", {
+        username,
+        password,
+      });
       const { token, userId } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
       onSignIn(userId);
-    } catch (error) {
-      console.error("Error signing in:", error);
+    } catch (error: any) {
       alert("Invalid username or password. Please try again.");
     }
   };

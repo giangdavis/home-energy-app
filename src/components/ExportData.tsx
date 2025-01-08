@@ -1,12 +1,17 @@
-import React, { useState } from "react";
 
-const ExportData = ({ userId }) => {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+import React, { useState, FormEvent } from "react";
 
-  const handleSubmit = async (event) => {
+type ExportDataProps = {
+  userId: string;
+};
+
+const ExportData: React.FC<ExportDataProps> = ({ userId }) => {
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -46,7 +51,7 @@ const ExportData = ({ userId }) => {
       link.download = `energy_data_${userId}.csv`;
       link.click();
       URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch (err: any) {
       setError(`Error exporting data: ${err.message}`);
       console.error("Export error:", err);
 

@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import axios from "axios";
 
-const initialValues = {
-  date: "",
-  usage: "",
+type SingleEntryFormProps = {
+  userId: string;
 };
 
-const SingleEntryForm = ({ userId }) => {
-  const [values, setValues] = useState(initialValues);
-  const [result, setResult] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const SingleEntryForm: React.FC<SingleEntryFormProps> = ({ userId }) => {
+  const [values, setValues] = useState({ date: "", usage: "" });
+  const [result, setResult] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setValues({
       ...values,
@@ -19,58 +19,35 @@ const SingleEntryForm = ({ userId }) => {
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
     setResult("");
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('Authentication token not found. Please sign in again.');
+        throw new Error("Authentication token not found. Please sign in again.");
       }
 
-      const response = await axios.post(
+      await axios.post(
         "https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/input",
         {
-          userId: userId,
+          userId,
           date: values.date,
           usage: Number(values.usage),
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
-
-      console.log(response);
       setResult("Energy data saved successfully");
-      setValues(initialValues);
-    } catch (error) {
-      console.error('Submission error:', error);
-      let errorMessage = 'Failed to save energy data: ';
-
-      if (error.response) {
-        // Server responded with error
-        errorMessage += error.response.data?.error || error.response.data?.message || error.message;
-
-        // Handle authentication errors
-        if (error.response.status === 401 || error.response.status === 403) {
-          errorMessage = 'Authentication error. Please sign in again.';
-          // Optionally redirect to login
-          // window.location.href = '/signin';
-        }
-      } else if (error.request) {
-        // Request made but no response
-        errorMessage += 'No response from server. Please check your connection.';
-      } else {
-        // Error setting up request
-        errorMessage += error.message;
-      }
-
-      setResult(errorMessage);
+      setValues({ date: "", usage: "" });
+    } catch (error: any) {
+      setResult(`Failed to save energy data: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -81,7 +58,6 @@ const SingleEntryForm = ({ userId }) => {
       <h2>Single Entry Form</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="date">Date:</label>
-        <br />
         <input
           type="date"
           name="date"
@@ -90,14 +66,8 @@ const SingleEntryForm = ({ userId }) => {
           id="date"
           required
           disabled={isSubmitting}
-          className="input-box"
         />
-        <br />
-        <br />
-
-        <label htmlFor="usage">
-            Energy Usage (kWh):</label>
-        <br />
+        <label htmlFor="usage">Energy Usage (kWh):</label>
         <input
           type="number"
           name="usage"
@@ -109,23 +79,11 @@ const SingleEntryForm = ({ userId }) => {
           required
           disabled={isSubmitting}
         />
-        <br />
-        <br />
-
-        <button
-          type="submit"
-          id="submit-button"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Submitting...' : 'Submit'}
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
-      <p style={{
-        color: result.includes('successfully') ? 'green' : 'red',
-        marginTop: '10px'
-      }}>
-        {result}
-      </p>
+      <p>{result}</p>
     </div>
   );
 };

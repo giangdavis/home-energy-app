@@ -1,15 +1,20 @@
-import React, { useState } from "react";
 
-const CostEstimation = ({ userId }) => {
+import React, { useState, FormEvent } from "react";
+
+type CostEstimationProps = {
+  userId: string;
+};
+
+const CostEstimation: React.FC<CostEstimationProps> = ({ userId }) => {
   const [values, setValues] = useState({
     startDate: "",
     endDate: "",
     costPerKwh: "",
   });
-  const [result, setResult] = useState("");
-  const [isCalculating, setIsCalculating] = useState(false);
+  const [result, setResult] = useState<string>("");
+  const [isCalculating, setIsCalculating] = useState<boolean>(false);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setValues({
       ...values,
@@ -17,7 +22,7 @@ const CostEstimation = ({ userId }) => {
     });
   };
 
-  const handleCalculate = async (event) => {
+  const handleCalculate = async (event: FormEvent) => {
     event.preventDefault();
     setIsCalculating(true);
     setResult("");
@@ -27,7 +32,7 @@ const CostEstimation = ({ userId }) => {
         userId,
         startDate: values.startDate,
         endDate: values.endDate,
-        costPerKwh: String(values.costPerKwh || 0.12), // Ensure costPerKwh is a string
+        costPerKwh: String(values.costPerKwh || 0.12),
       };
 
       const queryParams = new URLSearchParams(params).toString();
@@ -41,8 +46,9 @@ const CostEstimation = ({ userId }) => {
       }
 
       const data = await response.json();
-      setResult(`Total Usage: ${data.totalUsage} kWh\nTotal Cost: $${data.totalCost.toFixed(2)}`);
-    } catch (error) {
+      setResult(`Total Usage: ${data.totalUsage} kWh
+Total Cost: $${data.totalCost.toFixed(2)}`);
+    } catch (error: any) {
       console.error("Calculation error:", error);
       setResult(`Error: ${error.message}`);
     } finally {

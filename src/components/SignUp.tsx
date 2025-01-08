@@ -1,25 +1,24 @@
-import React, { useState } from "react";
+
+import React, { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const SignUp = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const SignUp: React.FC = () => {
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleSignUp = async (e) => {
+  const handleSignUp = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/auth/signup",
-        { username, email, password }
-      );
-      
-      // Navigate to confirm account page with username
+      await axios.post("https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/auth/signup", {
+        username,
+        email,
+        password,
+      });
       navigate(`/confirm-account?username=${encodeURIComponent(username)}`);
-    } catch (error) {
-      console.error("Error signing up:", error);
+    } catch (error: any) {
       alert(error.response?.data?.error || "Error signing up. Please try again.");
     }
   };
@@ -28,33 +27,27 @@ const SignUp = () => {
     <div>
       <h2>Sign Up</h2>
       <form onSubmit={handleSignUp}>
-        <div>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
         <button type="submit">Sign Up</button>
       </form>
       <p>

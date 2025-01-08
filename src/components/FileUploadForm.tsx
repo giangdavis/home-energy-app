@@ -1,26 +1,27 @@
-import React, { useState } from "react";
+
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import axios, { AxiosResponse } from "axios";
 
-const FileUploadForm = ({ userId }) => {
+type FileUploadFormProps = {
+  userId: string;
+};
+
+type PreSignedUrlResponse = {
+  uploadUrl: string;
+  fileKey: string;
+};
+
+const FileUploadForm: React.FC<FileUploadFormProps> = ({ userId }) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadResult, setUploadResult] = useState<string>("");
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
-  interface FileUploadFormProps {
-    userId: string;
-  }
-  
-  interface PreSignedUrlResponse {
-    uploadUrl: string;
-    fileKey: string;
-  }
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFile(event.target.files?.[0] || null);
-    setUploadResult(""); // Clear previous results
+    setUploadResult("");
   };
 
-  const handleFileUpload = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFileUpload = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!file) {
       setUploadResult("Error: Please select a file first");
@@ -31,86 +32,38 @@ const FileUploadForm = ({ userId }) => {
     setUploadResult("Starting upload process...");
 
     try {
-      // Get token from localStorage
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('Authentication token not found. Please sign in again.');
+        throw new Error("Authentication token not found. Please sign in again.");
       }
 
-      // Common headers for all requests
       const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       };
 
-      // 1. Get pre-signed URL
       setUploadResult("Getting upload URL...");
-      console.log(`Requesting upload URL for user: ${userId}`);
-      
       const urlResponse: AxiosResponse<PreSignedUrlResponse> = await axios.post(
         `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/upload?userId=${userId}`,
         {},
         { headers }
       );
 
-      console.log('Pre-signed URL response:', urlResponse.data);
-
       if (!urlResponse.data.uploadUrl) {
-        throw new Error('Failed to get upload URL');
+        throw new Error("Failed to get upload URL");
       }
 
-      // 2. Upload file using pre-signed URL
       setUploadResult("Uploading file to S3...");
-      const uploadResponse = await axios.put(
-        urlResponse.data.uploadUrl,
-        file,
-        {
-          headers: {
-            'Content-Type': 'text/csv',
-            'Access-Control-Allow-Origin': '*'
-          }
-        }
-      );
+      await axios.put(urlResponse.data.uploadUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
 
-      console.log('S3 upload response:', uploadResponse);
-
-      setUploadResult(
-        `File uploaded successfully!\n` +
-        `File: ${file.name}\n` +
-        `Size: ${(file.size / 1024).toFixed(2)} KB\n` +
-        `Type: ${file.type}\n` +
-        `Upload Location: ${urlResponse.data.fileKey}`
-      );
-
-      // Clear file input after successful upload
+      setUploadResult(`File uploaded successfully! Upload Location: ${urlResponse.data.fileKey}`);
       setFile(null);
-      const fileInput = document.getElementById('file') as HTMLInputElement;
-      if (fileInput) {
-        fileInput.value = '';
-      }
-
-    } catch (error) {
-      console.error('Upload error:', error);
-      let errorMessage = 'Upload failed: ';
-
-      if (error.response) {
-        // Server responded with error
-        errorMessage += error.response.data?.message || error.response.data?.error || error.message;
-      } else if (error.request) {
-        // Request made but no response
-        errorMessage += 'No response from server. Please check your connection.';
-      } else {
-        // Error setting up request
-        errorMessage += error.message;
-      }
-
-      setUploadResult(errorMessage);
-
-      // Handle authentication errors
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        // Optionally redirect to login
-        // window.location.href = '/signin';
-      }
+    } catch (error: any) {
+      setUploadResult(`Upload failed: ${error.message}`);
     } finally {
       setIsUploading(false);
     }
@@ -121,7 +74,6 @@ const FileUploadForm = ({ userId }) => {
       <h2>Bulk Upload</h2>
       <form onSubmit={handleFileUpload}>
         <label htmlFor="file">Upload CSV File:</label>
-        <br />
         <input
           type="file"
           accept=".csv"
@@ -129,22 +81,11 @@ const FileUploadForm = ({ userId }) => {
           id="file"
           disabled={isUploading}
         />
-        <br />
-        <br />
-        <button 
-          type="submit" 
-          disabled={!file || isUploading}
-        >
-          {isUploading ? 'Uploading...' : 'Upload File'}
+        <button type="submit" disabled={!file || isUploading}>
+          {isUploading ? "Uploading..." : "Upload File"}
         </button>
       </form>
-      <pre style={{ 
-        whiteSpace: 'pre-wrap', 
-        wordBreak: 'break-word',
-        marginTop: '10px'
-      }}>
-        {uploadResult}
-      </pre>
+      <pre>{uploadResult}</pre>
     </div>
   );
 };

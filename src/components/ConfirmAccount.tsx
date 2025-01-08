@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const ConfirmAccount = () => {
-  const [confirmationCode, setConfirmationCode] = useState("");
-  const [username, setUsername] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+const ConfirmAccount: React.FC = () => {
+  const [confirmationCode, setConfirmationCode] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,7 +19,7 @@ const ConfirmAccount = () => {
     }
   }, [location]);
 
-  const handleConfirm = async (e) => {
+  const handleConfirm = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
@@ -30,7 +31,7 @@ const ConfirmAccount = () => {
       );
       alert("Account confirmed successfully!");
       navigate("/signin");
-    } catch (error) {
+    } catch (error: any) {
       setError(error.response?.data?.error || "Error confirming account");
     } finally {
       setIsLoading(false);
@@ -47,7 +48,7 @@ const ConfirmAccount = () => {
         { username }
       );
       alert("Verification code resent successfully!");
-    } catch (error) {
+    } catch (error: any) {
       setError(error.response?.data?.error || "Error resending code");
     } finally {
       setIsLoading(false);
