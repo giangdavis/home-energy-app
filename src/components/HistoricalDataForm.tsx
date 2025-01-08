@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 
-const HistoricalDataForm = ({ userId }) => {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [data, setData] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+type DataItem = {
+  date: string;
+  usage: number;
+};
 
-  const handleSubmit = async (event) => {
+type HistoricalDataFormProps = {
+  userId: string;
+};
+
+const HistoricalDataForm: React.FC<HistoricalDataFormProps> = ({ userId }) => {
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [data, setData] = useState<DataItem[]>([]);
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -40,9 +49,9 @@ const HistoricalDataForm = ({ userId }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const jsonData = await response.json();
+      const jsonData: DataItem[] = await response.json();
       setData(jsonData);
-    } catch (err) {
+    } catch (err: any) {
       setError(`Error fetching data: ${err.message}`);
       console.error("Fetch error:", err);
 

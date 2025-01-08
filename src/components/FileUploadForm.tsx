@@ -1,17 +1,26 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const FileUploadForm = ({ userId }) => {
-  const [file, setFile] = useState(null);
-  const [uploadResult, setUploadResult] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadResult, setUploadResult] = useState<string>("");
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+  interface FileUploadFormProps {
+    userId: string;
+  }
+  
+  interface PreSignedUrlResponse {
+    uploadUrl: string;
+    fileKey: string;
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFile(event.target.files?.[0] || null);
     setUploadResult(""); // Clear previous results
   };
 
-  const handleFileUpload = async (event) => {
+  const handleFileUpload = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!file) {
       setUploadResult("Error: Please select a file first");
@@ -38,7 +47,7 @@ const FileUploadForm = ({ userId }) => {
       setUploadResult("Getting upload URL...");
       console.log(`Requesting upload URL for user: ${userId}`);
       
-      const urlResponse = await axios.post(
+      const urlResponse: AxiosResponse<PreSignedUrlResponse> = await axios.post(
         `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/upload?userId=${userId}`,
         {},
         { headers }
@@ -75,7 +84,7 @@ const FileUploadForm = ({ userId }) => {
 
       // Clear file input after successful upload
       setFile(null);
-      const fileInput = document.getElementById('file');
+      const fileInput = document.getElementById('file') as HTMLInputElement;
       if (fileInput) {
         fileInput.value = '';
       }

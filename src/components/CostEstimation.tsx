@@ -23,12 +23,14 @@ const CostEstimation = ({ userId }) => {
     setResult("");
 
     try {
-      const queryParams = new URLSearchParams({
+      const params = {
         userId,
         startDate: values.startDate,
         endDate: values.endDate,
-        costPerKwh: values.costPerKwh || 0.12, // Default costPerKwh
-      }).toString();
+        costPerKwh: String(values.costPerKwh || 0.12), // Ensure costPerKwh is a string
+      };
+
+      const queryParams = new URLSearchParams(params).toString();
 
       const response = await fetch(
         `https://bhdzt2k39g.execute-api.us-west-2.amazonaws.com/energy/cost-estimation?${queryParams}`
