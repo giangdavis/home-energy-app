@@ -10,6 +10,7 @@ import AlertsForm from "./components/AlertsForm";
 import ExportData from "./components/ExportData";
 import EnergySummary from "./components/EnergySummary";
 import CostEstimation from "./components/CostEstimation";
+import Dashboard from "./dashboard/page";
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -89,13 +90,13 @@ const App: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="auth-container">
-            <h1>Home Energy Data</h1>
+          <div>
             <Routes>
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="*" element={<Navigate to="/signin" />} />
               <Route path="/confirm-account" element={<ConfirmAccount />} />
+              <Route path="/dashboard" element={<Dashboard/>} />
             </Routes>
           </div>
         )}
