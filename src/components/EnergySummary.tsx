@@ -7,18 +7,44 @@ import {
   CategoryScale,
   Tooltip,
   Legend,
+  ChartData,
+  ChartOptions
 } from "chart.js";
 
 // Register required Chart.js components
 ChartJS.register(BarElement, LinearScale, CategoryScale, Tooltip, Legend);
 
-const EnergySummary = ({ userId }) => {
-  const [period, setPeriod] = useState("monthly"); // Default to monthly
-  const [chartData, setChartData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+// Define interfaces for the component props and data structures
+interface EnergySummaryProps {
+  userId: string;
+}
 
-  const fetchSummary = async () => {
+interface EnergyDataItem {
+  date: string;
+  usage: number;
+}
+
+type PeriodType = "daily" | "weekly" | "monthly";
+
+// Define the chart data structure
+interface ChartDataStructure {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth: number;
+  }[];
+}
+
+const EnergySummary: React.FC<EnergySummaryProps> = ({ userId }) => {
+  const [period, setPeriod] = useState<PeriodType>("monthly");
+  const [chartData, setChartData] = useState<ChartDataStructure | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const fetchSummary = async (): Promise<void> => {
     setLoading(true);
     setError("");
     try {
@@ -49,17 +75,17 @@ const EnergySummary = ({ userId }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: EnergyDataItem[] = await response.json();
       transformChartData(data);
     } catch (err) {
       console.error("Error fetching summary:", err);
-      setError(err.message);
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  const transformChartData = (data) => {
+  const transformChartData = (data: EnergyDataItem[]): void => {
     const labels = data.map((item) => item.date);
     const usageData = data.map((item) => item.usage);
 
@@ -79,10 +105,45 @@ const EnergySummary = ({ userId }) => {
 
   useEffect(() => {
     fetchSummary();
-  }, [period]);
+  }, [period, userId]); // Added userId to dependency array
 
-  const handlePeriodChange = (e) => {
-    setPeriod(e.target.value);
+  const handlePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    setPeriod(e.target.value as PeriodType);
+  };
+
+  // Define chart options with proper typing
+  const chartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: period === "monthly" ? "Month" : "Date",
+          font: {
+            size: 14,
+          },
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Usage (kWh)",
+          font: {
+            size: 14,
+          },
+        },
+      },
+    },
   };
 
   return (
@@ -106,42 +167,7 @@ const EnergySummary = ({ userId }) => {
 
       {chartData && (
         <div className="chart-container">
-          <Bar
-            data={chartData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: {
-                  display: true,
-                  position: "top",
-                },
-                tooltip: {
-                  mode: "index",
-                  intersect: false,
-                },
-              },
-              scales: {
-                x: {
-                  title: {
-                    display: true,
-                    text: period === "monthly" ? "Month" : "Date",
-                    font: {
-                      size: 14,
-                    },
-                  },
-                },
-                y: {
-                  title: {
-                    display: true,
-                    text: "Usage (kWh)",
-                    font: {
-                      size: 14,
-                    },
-                  },
-                },
-              },
-            }}
-          />
+          <Bar data={chartData} options={chartOptions} />
         </div>
       )}
     </div>

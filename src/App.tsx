@@ -11,21 +11,23 @@ import ExportData from "./components/ExportData";
 import EnergySummary from "./components/EnergySummary";
 import CostEstimation from "./components/CostEstimation";
 
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userId, setUserId] = useState("");
+const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
+    const storedUserId = localStorage.getItem("userId");
+    if (token && storedUserId) {
       setIsAuthenticated(true);
-      setUserId(localStorage.getItem("userId"));
+      setUserId(storedUserId);
     }
   }, []);
 
-  const handleSignIn = (userId) => {
+  const handleSignIn = (userId: string) => {
     setIsAuthenticated(true);
     setUserId(userId);
+    localStorage.setItem("userId", userId);
   };
 
   const handleSignOut = () => {
@@ -67,19 +69,19 @@ const App = () => {
             <hr className="section-divider" />
 
             <section className="component-section">
-              <ExportData userId = {userId} />
+              <ExportData userId={userId} />
             </section>
 
             <hr className="section-divider" />
 
             <section className="component-section">
-              <EnergySummary userId = {userId} />
+              <EnergySummary userId={userId} />
             </section>
 
             <hr className="section-divider" />
 
             <section className="component-section">
-              <CostEstimation userId = {userId}/>
+              <CostEstimation userId={userId} />
             </section>
 
             <button className="signout-button" onClick={handleSignOut}>
