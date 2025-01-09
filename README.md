@@ -3,7 +3,7 @@
 ## Local Development Setup
 
 ### Prerequisites
-- Node.js installed on your machine
+- Node.js installed on your machine - version 18 or later 
 - npm (Node Package Manager)
 - Git (for cloning the repository)
 
@@ -17,6 +17,7 @@
 2. **Install Dependencies**
    ```bash
    npm install
+   npm install tailwindcss postcss autoprefixer
    ```
 
 3. **Run Development Server**
